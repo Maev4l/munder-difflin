@@ -35,6 +35,10 @@ files:
   - CHANGELOG.md
   - "!**/*.{md,map,ts,tsx}"
   - "!**/{.eslintrc,.prettierrc,tsconfig*.json,electron.vite.config.*}"
+  # better-sqlite3 ships a test fixture addon that is built for the host arch only.
+  # It is identical in both universal slices, so @electron/universal refuses to merge
+  # it without an x64ArchFiles rule — and it is dead weight at runtime either way.
+  - "!**/better-sqlite3/build/Release/test_extension.node"
 
 # Ship the standalone Slack reply helper as a plain file under the app's
 # resources dir (process.resourcesPath). It runs under `node`, NOT inside the
@@ -83,6 +87,12 @@ mac:
     NSMicrophoneUsageDescription: "Munder Difflin uses your microphone only for its opt-in voice features: Free Flow dictation (transcribed by Groq into the message queue) and talking to Michael in real time (streamed to OpenAI). The mic is off unless you turn one of these on."
   # Hardened runtime + entitlements so the spawned `claude` agents inherit this
   # app's TCC responsibility (one grant covers them all) and node-pty can load.
+  # node-pty ships single-arch artifacts that are byte-identical in both universal
+  # slices (a stale bin/darwin-arm64-128 build plus the per-platform prebuilds the
+  # loader only falls back to). @electron/universal 2.x refuses to merge identical
+  # Mach-O files unless they are declared single-arch, so declare them rather than
+  # dropping the runtime fallback.
+  x64ArchFiles: "**/node-pty/{bin,prebuilds}/**"
   hardenedRuntime: true
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
