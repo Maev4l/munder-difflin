@@ -92,7 +92,9 @@ mac:
   # loader only falls back to). @electron/universal 2.x refuses to merge identical
   # Mach-O files unless they are declared single-arch, so declare them rather than
   # dropping the runtime fallback.
-  x64ArchFiles: "**/node-pty/{bin,prebuilds}/**"
+  # better-sqlite3 13 also ships per-platform prebuilds (8 of them; only the two
+  # darwin ones are Mach-O), so it needs the same treatment as node-pty.
+  x64ArchFiles: "**/{node-pty/bin,node-pty/prebuilds,better-sqlite3/prebuilds}/**"
   hardenedRuntime: true
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
