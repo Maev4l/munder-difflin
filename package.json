@@ -10,6 +10,9 @@
     "type": "git",
     "url": "https://github.com/chaitanyagiri/munder-difflin.git"
   },
+  "engines": {
+    "node": ">=22.22.0"
+  },
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build && npm run copy:main-assets",
